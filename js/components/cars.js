@@ -12,12 +12,17 @@ class Car {
     }
 
     uzvesti() {
+        if (this.isOn === true) {
+            console.log(`Masina jau uzvesta. Geriau negadink starterio!`);
+            return false;
+        }
         this.isOn = true;
-        console.log(`The ${this.carName} dabar yra uzvesta. BRUMMMMMMM`);
+        console.log(`${this.carName} dabar yra uzvesta.`);
     }
+
     uzgesinti() {
         this.isOn = false;
-        console.log(`The ${this.carName} yra uzgesinta. Negalite vaziuoti kol neuzvesite automobilio.`);
+        console.log(`${this.carName} buvo uzgesinta. Negalite vaziuoti kol neuzvesite automobilio.`);
     }
 
     sanaudos(n) {
@@ -26,17 +31,19 @@ class Car {
 
     vaziuoti(n) {
         const gasPerDist = this.usage * n / 100;
-        let gasLeft = this.tankLeft;
 
         if (this.isOn !== true) {
             console.log(`${this.carName} siuo metu neuzvesta. Uzvesk!`);
-        } else if (gasPerDist <= gasLeft) {
-            console.log(`${this.carName} sekmingai nuvaziavo ${n} kilometru.`);
-        } else {
-            console.log(`Tokiam atstumui neuzteks degalu.`);
+            return false;
         }
-        gasLeft -= gasPerDist;
 
+        if (gasPerDist > this.tankLeft) {
+            console.log(`Neuzteks degalu nuvaziuoti ${n} kilometru.`);
+            return false;
+        }
+        this.tankLeft -= gasPerDist;
+        this.mileage += n;
+        console.log(`${this.carName} sekmingai nuvaziavo ${n} kilometru. Dabartine rida yra ${this.mileage} km.`);
     }
 
     likoDegalu() {
@@ -46,12 +53,3 @@ class Car {
 }
 
 export { Car }
-
-
-
-/* parametrai:
-    - ijungta: true/false
-    - bake: 5       (litrai)
-    - ryja: 2.5     (litrai/100 km)
-    - rida: 0
- */
