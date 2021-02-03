@@ -1,7 +1,7 @@
 class Car {
-    constructor(carName, isOn, tankLeft, usage, mileage) {
+    constructor(carName, tankLeft, usage, mileage) {
         this.carName = carName;
-        this.isOn = isOn;
+        this.isOn = false;
         this.tankLeft = tankLeft; // litrai deg
         this.usage = usage; // litrai /100km
         this.mileage = mileage;
@@ -12,8 +12,12 @@ class Car {
     }
 
     uzvesti() {
-        if (this.isOn === true) {
+        if (this.isOn) {
             console.log(`Masina jau uzvesta. Geriau negadink starterio!`);
+            return false;
+        }
+        if (this.tankLeft === 0) {
+            console.log('masina nebeturi degalu ir neuzsiveda.');
             return false;
         }
         this.isOn = true;
@@ -22,7 +26,7 @@ class Car {
 
     uzgesinti() {
         this.isOn = false;
-        console.log(`${this.carName} buvo uzgesinta. Negalite vaziuoti kol neuzvesite automobilio.`);
+        console.log(`${this.carName} yra uzgesinta. Negalite vaziuoti kol neuzvesite automobilio arba neipilsite benzo.`);
     }
 
     sanaudos(n) {
@@ -30,20 +34,24 @@ class Car {
     }
 
     vaziuoti(n) {
-        const gasPerDist = this.usage * n / 100;
+        const maxDist = this.tankLeft / this.usage * 100;
 
         if (this.isOn !== true) {
             console.log(`${this.carName} siuo metu neuzvesta. Uzvesk!`);
             return false;
         }
 
-        if (gasPerDist > this.tankLeft) {
-            console.log(`Neuzteks degalu nuvaziuoti ${n} kilometru.`);
-            return false;
+        if (maxDist >= n && this.isOn === true) {
+            this.mileage += n;
+            this.tankLeft -= this.usage * n / 100;
+            console.log(`${this.carName} sekmingai nuvaziavo ${n} kilometru. Dabartine rida yra ${this.mileage} km.`);
+        } else {
+            this.mileage += maxDist;
+            this.tankLeft = 0;
+            console.log(`${this.carName} nuvaziavo ${maxDist} kilometru ir uzgeso nes baigesi benzas. Liko nenuvaziuoti ${n - maxDist}`);
+            this.uzgesinti();
+
         }
-        this.tankLeft -= gasPerDist;
-        this.mileage += n;
-        console.log(`${this.carName} sekmingai nuvaziavo ${n} kilometru. Dabartine rida yra ${this.mileage} km.`);
     }
 
     likoDegalu() {
